@@ -1,0 +1,920 @@
+import React, { useState, useMemo } from 'react';
+import { MapPin, Search, Music, PartyPopper, Calendar, ChevronDown } from 'lucide-react';
+
+const PROGRAMACAO = [
+  {
+    dia: "Quinta-feira (12)",
+    locais: [
+      {
+        nome: "Praça do Arsenal",
+        eventos: [
+          { hora: "16h", artista: "Bloco Nem Com Uma Flor" }
+        ]
+      },
+      {
+        nome: "Marco Zero",
+        eventos: [
+          { hora: "17h30", artista: "Tumaraca - Encontro das Nações de Maracatu" },
+          { hora: "19h30", artista: "Lenine (c/ Ana Vitória, Liniker e Spok)" },
+          { hora: "22h", artista: "Dominguinho - João Gomes, Jota.Pê e Mestrinho" },
+          { hora: "0h", artista: "Priscila Senna" }
+        ]
+      },
+      {
+        nome: "Pátio de Santa Cruz",
+        eventos: [
+          { hora: "17h", artista: "Grupo Pernambucaneando" },
+          { hora: "18h", artista: "Escola de Samba Galeria do Ritmo" },
+          { hora: "19h", artista: "Afoxé Elegbará" },
+          { hora: "20h", artista: "Coco Zeca do Rolete" },
+          { hora: "21h", artista: "Mestre Zeca Cirandeiro" }
+        ]
+      },
+      {
+        nome: "Blocos",
+        eventos: [
+          { hora: "16h", artista: "Afojubá Batuque - Av. Marquês de Olinda" },
+          { hora: "18h", artista: "Me Mostra Teu Mapa Astra - Pça. Maciel Pinheiro" },
+          { hora: "19h", artista: "Escuta Levino - Pça. Maciel Pinheiro" },
+          { hora: "20h", artista: "Shortinho Torano - Rua do Apolo, 174" }
+        ]
+      }
+    ]
+  },
+  {
+    dia: "Sexta-feira (13)",
+    locais: [
+      {
+        nome: "Marco Zero",
+        eventos: [
+          { hora: "16h", artista: "Desfile das agremiações campeãs" },
+          { hora: "18h30", artista: "Maestro Spok" },
+          { hora: "20h", artista: "Vanessa da Mata" },
+          { hora: "22h", artista: "Iza" },
+          { hora: "0h", artista: "Raphaela Santos" }
+        ]
+      },
+      {
+        nome: "Polo das Graças",
+        eventos: [
+          { hora: "16h", artista: "Orquestra Malassombro" },
+          { hora: "17h30", artista: "Nailson Vieira" },
+          { hora: "19h", artista: "Vinícius Barros com participação de PC Silva" },
+          { hora: "20h30", artista: "Igor de Carvalho" },
+          { hora: "22h", artista: "Barro" },
+          { hora: "Intervalos", artista: "DJ Rimas" }
+        ]
+      },
+      {
+        nome: "Blocos",
+        eventos: [
+          { hora: "17h", artista: "Segura o Tonho, Charlie Brow - Rua da Moeda" },
+          { hora: "17h", artista: "Nem Sempre Lily Toca Flauta - Pátio Santa Cruz" },
+          { hora: "19h", artista: "Batuques de Pernambuco - Rua da Moeda" },
+          { hora: "19h30", artista: "Buzina mas não freia - Coreto do Derby" },
+          { hora: "20h", artista: "Batadoní - Avenida Rio Branco" }
+        ]
+      }
+    ]
+  },
+  {
+    dia: "Sábado (14)",
+    locais: [
+      {
+        nome: "Marco Zero",
+        eventos: [
+          { hora: "16h", artista: "Desfile das vice-campeãs" },
+          { hora: "18h", artista: "Orquestra Popular do Recife" },
+          { hora: "19h30", artista: "Bloco do Silva" },
+          { hora: "21h", artista: "Liniker, com Amaro Freitas e Priscila Senna" },
+          { hora: "22h50", artista: "Ludmilla" },
+          { hora: "0h30", artista: "Anderson Neiff" },
+          { hora: "1h10", artista: "Recife Capital do Brega" }
+        ]
+      },
+      {
+        nome: "Polo das Graças",
+        eventos: [
+          { hora: "16h", artista: "Marco César e o Quarteto Chorado" },
+          { hora: "17h30", artista: "Adiel Luna e o Coco Camará" },
+          { hora: "19h", artista: "Maciel Salú" },
+          { hora: "20h30", artista: "Café Preto" },
+          { hora: "22h", artista: "Ivyson" },
+          { hora: "Intervalos", artista: "DJ Renato L" }
+        ]
+      },
+      {
+        nome: "Blocos",
+        eventos: [
+          { hora: "4h", artista: "Galo da Madrugada - Praça Sérgio Lôreto" },
+          { hora: "5h45", artista: "Pinto do Galo da Madrugada - Marco Zero" },
+          { hora: "7h", artista: "Galinha d'Água - Rio Capibaribe" },
+          { hora: "9h", artista: "Patusquinho - Pátio São Pedro" },
+          { hora: "15h", artista: "Cordas e Retalhos - Rua da Guia, 86" }
+        ]
+      }
+    ]
+  },
+  {
+    dia: "Domingo (15)",
+    locais: [
+      {
+        nome: "Marco Zero",
+        eventos: [
+          { hora: "17h15", artista: "Encontro de blocos e escolas de samba" },
+          { hora: "19h30", artista: "Karynna Spinelli" },
+          { hora: "21h", artista: "Mariene de Castro" },
+          { hora: "22h50", artista: "Pixote" },
+          { hora: "0h40", artista: "Sorriso Maroto" }
+        ]
+      },
+      {
+        nome: "Polo Alto José do Pinho",
+        eventos: [
+          { hora: "17h", artista: "Cospefogo" },
+          { hora: "18h", artista: "Pexera" },
+          { hora: "19h10", artista: "Alex Mono e Um Frevo Impossível" },
+          { hora: "20h40", artista: "Gilmar Bolla 8 & Combo X" },
+          { hora: "22h10", artista: "Devotos" },
+          { hora: "23h40", artista: "Nação Zumbi" }
+        ]
+      },
+      {
+        nome: "Polo Bomba do Hemetério",
+        eventos: [
+          { hora: "17h", artista: "Coco de Roda e Ciranda do Mestre Goitá" },
+          { hora: "18h", artista: "Reggae Pelo Reggae Sounds" },
+          { hora: "19h10", artista: "Tribo Cordel" },
+          { hora: "20h40", artista: "Nena Queiroga" },
+          { hora: "22h10", artista: "André Love" },
+          { hora: "23h40", artista: "Elba Ramalho" }
+        ]
+      },
+      {
+        nome: "Polo Brasília Teimosa",
+        eventos: [
+          { hora: "15h", artista: "Recife Matriz de Cultura Popular" },
+          { hora: "17h", artista: "Mestra Jaqueline Leite" },
+          { hora: "18h", artista: "Orquestra Fantasy" },
+          { hora: "19h10", artista: "Nono Germano" },
+          { hora: "20h40", artista: "Jucie" },
+          { hora: "22h10", artista: "Banda Kitara" },
+          { hora: "23h40", artista: "Luciano Ferraz" }
+        ]
+      },
+      {
+        nome: "Polo Campo Grande",
+        eventos: [
+          { hora: "17h", artista: "Mestres do Coco Pernambucano" },
+          { hora: "18h", artista: "Junior Soull" },
+          { hora: "19h10", artista: "PV Calado" },
+          { hora: "20h40", artista: "Benil" },
+          { hora: "22h10", artista: "Matheus Vini" },
+          { hora: "23h40", artista: "Netinho Curtição" }
+        ]
+      },
+      {
+        nome: "Polo Casa Amarela",
+        eventos: [
+          { hora: "17h", artista: "Caná Caiana" },
+          { hora: "18h", artista: "Trans Coco" },
+          { hora: "19h10", artista: "Banda N’Zambi" },
+          { hora: "20h40", artista: "Gustavo Travassos" },
+          { hora: "22h10", artista: "Siba" },
+          { hora: "23h40", artista: "Geraldo Azevedo" }
+        ]
+      },
+      {
+        nome: "Polo Cordeiro",
+        eventos: [
+          { hora: "17h", artista: "Bia Marinho" },
+          { hora: "18h", artista: "Allan Carlos – Carnaveia" },
+          { hora: "19h10", artista: "Dudu do Acordeon" },
+          { hora: "20h40", artista: "Excesso de Bagagem" },
+          { hora: "22h10", artista: "André Macambira" },
+          { hora: "23h40", artista: "Chico César" }
+        ]
+      },
+      {
+        nome: "Polo das Graças",
+        eventos: [
+          { hora: "15h", artista: "Família Salustiano e a Rabeca Encantada" },
+          { hora: "16h", artista: "Coral Edgard Moraes" },
+          { hora: "17h30", artista: "Mazuli" },
+          { hora: "19h", artista: "Gonzaga Leal" },
+          { hora: "20h30", artista: "Lucas dos Prazeres" },
+          { hora: "22h", artista: "Juliano Holanda e convidadas" }
+        ]
+      },
+      {
+        nome: "Polo Ibura",
+        eventos: [
+          { hora: "18h", artista: "Fogo do Amor" },
+          { hora: "19h10", artista: "Dandara MC" },
+          { hora: "20h40", artista: "Baile Marley" },
+          { hora: "22h10", artista: "Thayk" },
+          { hora: "23h40", artista: "Valquíria Santana" }
+        ]
+      },
+      {
+        nome: "Polo Jardim São Paulo",
+        eventos: [
+          { hora: "17h", artista: "Muganga do Samba" },
+          { hora: "18h", artista: "Afoxé Omo Obá Dê" },
+          { hora: "19h10", artista: "Terezinha do Acordeon" },
+          { hora: "20h40", artista: "Romero Ferro" },
+          { hora: "22h10", artista: "Rabecado" },
+          { hora: "23h40", artista: "Gustavo Travassos" }
+        ]
+      },
+      {
+        nome: "Polo Lagoa do Araçá",
+        eventos: [
+          { hora: "17h", artista: "Afoxé Omim Sabá" },
+          { hora: "18h", artista: "Portozero" },
+          { hora: "19h10", artista: "Juba" },
+          { hora: "20h40", artista: "Banda de Pau e Corda" },
+          { hora: "22h10", artista: "Alceu Valença" },
+          { hora: "23h40", artista: "Ed Carlos" }
+        ]
+      },
+      {
+        nome: "Polo Linha do Tiro",
+        eventos: [
+          { hora: "17h", artista: "Orquestra 100% Mulher" },
+          { hora: "18h", artista: "Rockout" },
+          { hora: "19h10", artista: "Arthurzinho Batedeira" },
+          { hora: "20h40", artista: "Luciano Magno" },
+          { hora: "22h10", artista: "Luiza Ketilyn" },
+          { hora: "23h40", artista: "Nena Queiroga" }
+        ]
+      },
+      {
+        nome: "Polo Poço da Panela",
+        eventos: [
+          { hora: "17h", artista: "Mestre Lua" },
+          { hora: "18h", artista: "Adiel Luna e o Coco Camará" },
+          { hora: "19h10", artista: "Quinteto Violado" },
+          { hora: "20h40", artista: "Antônio Nóbrega" },
+          { hora: "22h10", artista: "Paulo Netto e Martins" },
+          { hora: "23h40", artista: "Roberta Sá" }
+        ]
+      },
+      {
+        nome: "Polo da Várzea",
+        eventos: [
+          { hora: "15h", artista: "Recife Matriz de Cultura Popular" },
+          { hora: "17h", artista: "O Povo Quer Sambar" },
+          { hora: "18h", artista: "Riáh" },
+          { hora: "19h10", artista: "Barbarize" },
+          { hora: "20h40", artista: "Uana" },
+          { hora: "22h10", artista: "Lula Queiroga" },
+          { hora: "23h40", artista: "Lenine" }
+        ]
+      },
+      {
+        nome: "Polo Mercado da Boa Vista",
+        eventos: [
+          { hora: "13h30", artista: "Betto do Bandolim" },
+          { hora: "15h", artista: "Kelly Rosa" },
+          { hora: "16h30", artista: "Grupo Pernambucaneando" }
+        ]
+      },
+      {
+        nome: "Terça Negra - Pátio do Terço",
+        eventos: [
+          { hora: "19h20", artista: "Capim Santo" },
+          { hora: "20h40", artista: "Valdir Afonjah" },
+          { hora: "22h", artista: "Cubana Rasta" },
+          { hora: "23h20", artista: "Grupo Bongar" },
+          { hora: "00h40", artista: "Danzi" }
+        ]
+      },
+      {
+        nome: "Pátio de Santa Cruz",
+        eventos: [
+          { hora: "15h", artista: "Encontro de Bois" }
+        ]
+      },
+      {
+        nome: "Blocos",
+        eventos: [
+          { hora: "15h", artista: "Caranguejo no Caçuá - Rua da Moeda" }
+        ]
+      }
+    ]
+  },
+  {
+    dia: "Segunda-feira (16)",
+    locais: [
+      {
+        nome: "Marco Zero",
+        eventos: [
+          { hora: "16h", artista: "Encontro de blocos líricos" },
+          { hora: "20h", artista: "Maestro Forró e OPBH" },
+          { hora: "21h30", artista: "Nação Zumbi com Devotos" },
+          { hora: "23h15", artista: "Seu Jorge" },
+          { hora: "1h", artista: "Alok" }
+        ]
+      },
+      {
+        nome: "Polo Alto José do Pinho",
+        eventos: [
+          { hora: "17h", artista: "Cila do Coco" },
+          { hora: "18h", artista: "Afoxé Ylê de Egbá" },
+          { hora: "19h10", artista: "Banda Viruz" },
+          { hora: "20h40", artista: "FK Feiticeiro" },
+          { hora: "22h10", artista: "Mago de Tarso" },
+          { hora: "23h40", artista: "Faces do Subúrbio" }
+        ]
+      },
+      {
+        nome: "Polo Bomba do Hemetério",
+        eventos: [
+          { hora: "17h", artista: "Grupo Flor Que Se Cheira" },
+          { hora: "18h", artista: "Entidade Cultural Afoxé Ará Omim" },
+          { hora: "19h10", artista: "Lucinha Guerra" },
+          { hora: "20h40", artista: "Edilza Aires" },
+          { hora: "22h10", artista: "Belo Xis" },
+          { hora: "23h40", artista: "Maestro Spok e Banda de Pau e Corda" }
+        ]
+      },
+      {
+        nome: "Polo Brasília Teimosa",
+        eventos: [
+          { hora: "15h", artista: "Recife Matriz de Cultura Popular" },
+          { hora: "17h", artista: "Grupo Mazuca da Quixaba" },
+          { hora: "18h", artista: "Clara Sobral" },
+          { hora: "19h10", artista: "Rogério Som" },
+          { hora: "20h40", artista: "Faringes da Paixão" },
+          { hora: "22h10", artista: "Dany Myler" },
+          { hora: "23h40", artista: "Gaby Amarantos" }
+        ]
+      },
+      {
+        nome: "Polo Campo Grande",
+        eventos: [
+          { hora: "17h", artista: "Jorge Silva" },
+          { hora: "18h", artista: "DJ Eli" },
+          { hora: "19h10", artista: "Diablo Angel" },
+          { hora: "20h40", artista: "Augusto Cesar Filho" },
+          { hora: "22h10", artista: "Marron Brasileiro" },
+          { hora: "23h40", artista: "Conde Só Brega" }
+        ]
+      },
+      {
+        nome: "Polo Casa Amarela",
+        eventos: [
+          { hora: "17h", artista: "Coco do Amaro Branco" },
+          { hora: "18h", artista: "Malou Marinho" },
+          { hora: "19h10", artista: "Banda Som da Terra" },
+          { hora: "20h40", artista: "Benil" },
+          { hora: "22h10", artista: "Gabi da Pele Preta e Revoredo" },
+          { hora: "23h40", artista: "Santa Dose" }
+        ]
+      },
+      {
+        nome: "Polo Cordeiro",
+        eventos: [
+          { hora: "17h", artista: "Nininha Coco" },
+          { hora: "18h", artista: "Roda de Samba Os Batuqueiros" },
+          { hora: "19h10", artista: "Charles Theony" },
+          { hora: "20h40", artista: "Quinteto Violado" },
+          { hora: "22h10", artista: "Bateria Auê" },
+          { hora: "23h40", artista: "Fundo de Quintal" }
+        ]
+      },
+      {
+        nome: "Polo das Graças",
+        eventos: [
+          { hora: "16h", artista: "Augusto Silva & Frevo Novo" },
+          { hora: "17h30", artista: "Sofia Freire" },
+          { hora: "19h", artista: "PC Silva (part. Tonfil)" },
+          { hora: "20h30", artista: "Gilu Amaral" },
+          { hora: "22h", artista: "Zé Manoel e Isadora Melo" }
+        ]
+      },
+      {
+        nome: "Polo Ibura",
+        eventos: [
+          { hora: "18h", artista: "Anderson Konhaque" },
+          { hora: "19h10", artista: "Helton Lima" },
+          { hora: "20h40", artista: "Banda Vinil" },
+          { hora: "22h10", artista: "Kelly Oliveira" },
+          { hora: "23h40", artista: "PV Calado" }
+        ]
+      },
+      {
+        nome: "Polo Jardim São Paulo",
+        eventos: [
+          { hora: "17h", artista: "Afoxé Oyá Guerê" },
+          { hora: "18h", artista: "Dmelococo" },
+          { hora: "19h10", artista: "Liv Moraes" },
+          { hora: "20h40", artista: "Rogério Rangel" },
+          { hora: "22h10", artista: "Nadia Maia" },
+          { hora: "23h40", artista: "Banda Chama do Brega" }
+        ]
+      },
+      {
+        nome: "Polo Lagoa do Araçá",
+        eventos: [
+          { hora: "17h", artista: "Geraldo Maia" },
+          { hora: "18h", artista: "Mano" },
+          { hora: "19h10", artista: "Ciel Santos" },
+          { hora: "20h40", artista: "Márcia Pequeno" },
+          { hora: "22h10", artista: "Gerlane Lops" },
+          { hora: "23h40", artista: "Mariene de Castro" }
+        ]
+      },
+      {
+        nome: "Polo Linha do Tiro",
+        eventos: [
+          { hora: "17h", artista: "Climério de Oliveira" },
+          { hora: "18h", artista: "Red Moskito" },
+          { hora: "19h10", artista: "Seu Januário" },
+          { hora: "20h40", artista: "Karynna Spinelli" },
+          { hora: "22h10", artista: "Alceu Valença" },
+          { hora: "23h40", artista: "Simples Olhar" }
+        ]
+      },
+      {
+        nome: "Polo Poço da Panela",
+        eventos: [
+          { hora: "17h", artista: "Pandeirada" },
+          { hora: "18h", artista: "Matheus Gaudêncio" },
+          { hora: "19h10", artista: "Sagrama" },
+          { hora: "20h40", artista: "Josildo Sá" },
+          { hora: "22h10", artista: "Banda Eddie" },
+          { hora: "23h40", artista: "Lenine" }
+        ]
+      },
+      {
+        nome: "Polo da Várzea",
+        eventos: [
+          { hora: "15h", artista: "Recife Matriz de Cultura Popular" },
+          { hora: "17h", artista: "Abissal e Maracatu Real da Várzea" },
+          { hora: "18h", artista: "Gramophante" },
+          { hora: "19h10", artista: "Larissa Lisboa" },
+          { hora: "20h40", artista: "Lia de Itamaracá e Daúde" },
+          { hora: "22h10", artista: "Natascha Falcão" },
+          { hora: "23h40", artista: "Otto" }
+        ]
+      },
+      {
+        nome: "Polo Mercado da Boa Vista",
+        eventos: [
+          { hora: "13h30", artista: "Betto do Bandolim" },
+          { hora: "15h", artista: "Kelly Rosa" },
+          { hora: "16h30", artista: "Grupo Pernambucaneando" }
+        ]
+      },
+      {
+        nome: "Terça Negra - Pátio do Terço",
+        eventos: [
+          { hora: "19h20", artista: "Capim Santo" },
+          { hora: "20h40", artista: "Valdir Afonjah" },
+          { hora: "22h", artista: "Cubana Rasta" },
+          { hora: "23h20", artista: "Grupo Bongar" },
+          { hora: "00h40", artista: "Danzi" }
+        ]
+      },
+      {
+        nome: "Pátio de Santa Cruz",
+        eventos: [
+          { hora: "15h", artista: "Encontro de Caboclinhos e Índios" }
+        ]
+      },
+      {
+        nome: "Blocos",
+        eventos: [
+          { hora: "12h", artista: "Bloco da Saudade - Pça. Maciel Pinheiro" },
+          { hora: "15h", artista: "Quero ver quem vem aí - Pça. do Arsenal" },
+          { hora: "16h", artista: "Maracatu Nação Pernambuco - Pça. do Arsenal" },
+          { hora: "16h", artista: "Afojubá Batuque - Av. Marquês de Olinda" },
+          { hora: "19h", artista: "Congobloco - Rua da Guia" }
+        ]
+      }
+    ]
+  },
+  {
+    dia: "Terça-feira (17)",
+    locais: [
+      {
+        nome: "Marco Zero",
+        eventos: [
+          { hora: "16h", artista: "Encontro de Maracatus de Baque Solto" },
+          { hora: "19h", artista: "Nena Queiroga" },
+          { hora: "20h30", artista: "Geraldo Azevedo" },
+          { hora: "22h", artista: "Elba Ramalho" },
+          { hora: "0h", artista: "Alceu Valença" },
+          { hora: "2h", artista: "Spok e Orquestrão" }
+        ]
+      },
+      {
+        nome: "Polo Alto José do Pinho",
+        eventos: [
+          { hora: "17h", artista: "Coco das Estrelas" },
+          { hora: "18h", artista: "Clube Carnavalesco Tribo Indígena Tupã" },
+          { hora: "19h10", artista: "Islan" },
+          { hora: "20h40", artista: "Zeh Rocha" },
+          { hora: "22h10", artista: "Bonsucesso Samba Clube" },
+          { hora: "23h40", artista: "Tagore" }
+        ]
+      },
+      {
+        nome: "Polo Bomba do Hemetério",
+        eventos: [
+          { hora: "17h", artista: "Bloco de Samba Anarquistas Bole Bole" },
+          { hora: "18h", artista: "Aliados CP" },
+          { hora: "19h10", artista: "Robby" },
+          { hora: "20h40", artista: "Zé Brown" },
+          { hora: "22h10", artista: "Nono Germano" },
+          { hora: "23h40", artista: "André Rio" }
+        ]
+      },
+      {
+        nome: "Polo Brasília Teimosa",
+        eventos: [
+          { hora: "15h", artista: "Recife Matriz de Cultura Popular" },
+          { hora: "17h", artista: "Banda Coruja e Seus Tangarás" },
+          { hora: "18h", artista: "Elly Carper" },
+          { hora: "19h10", artista: "Michelle Monteiro" },
+          { hora: "20h40", artista: "Turma do Braz" },
+          { hora: "22h10", artista: "Almir Rouche" },
+          { hora: "23h40", artista: "Forró Vumbora" }
+        ]
+      },
+      {
+        nome: "Polo Campo Grande",
+        eventos: [
+          { hora: "18h", artista: "Batucada Atômica" },
+          { hora: "19h10", artista: "Victor Leão" },
+          { hora: "20h40", artista: "Forró Vumbora" },
+          { hora: "22h10", artista: "Carla Alves" },
+          { hora: "23h40", artista: "Manoel Netto" }
+        ]
+      },
+      {
+        nome: "Polo Casa Amarela",
+        eventos: [
+          { hora: "17h", artista: "Mano de Baé" },
+          { hora: "18h", artista: "Chorinho no Mangue" },
+          { hora: "19h10", artista: "Platônicca" },
+          { hora: "20h40", artista: "Tayara Andreza" },
+          { hora: "22h10", artista: "Nando Cordel" },
+          { hora: "23h40", artista: "Luca de Melo" }
+        ]
+      },
+      {
+        nome: "Polo Cordeiro",
+        eventos: [
+          { hora: "17h", artista: "Grupo Cultural Afoxé Axé Sabá" },
+          { hora: "18h", artista: "Lara Couto" },
+          { hora: "19h10", artista: "Fabiana Pimentinha" },
+          { hora: "20h40", artista: "Banda Fim de Feira" },
+          { hora: "22h10", artista: "Beto Hortis" },
+          { hora: "23h40", artista: "César Michiles" }
+        ]
+      },
+      {
+        nome: "Polo das Graças",
+        eventos: [
+          { hora: "16h", artista: "Neris Rodrigues" },
+          { hora: "17h30", artista: "Geraldo Maia" },
+          { hora: "19h", artista: "Henrique Albino e Surama Ramos" },
+          { hora: "20h30", artista: "Bruna Alimonda" },
+          { hora: "22h", artista: "Juliana Linhares" }
+        ]
+      },
+      {
+        nome: "Polo Ibura",
+        eventos: [
+          { hora: "18h", artista: "Madry Calypso" },
+          { hora: "19h10", artista: "Denise Lima" },
+          { hora: "20h40", artista: "Capital do Frevo" },
+          { hora: "22h10", artista: "Michelle Melo" },
+          { hora: "23h40", artista: "Molejo" }
+        ]
+      },
+      {
+        nome: "Polo Jardim São Paulo",
+        eventos: [
+          { hora: "17h", artista: "Ciranda Terno da Mata" },
+          { hora: "18h", artista: "Banda Vambora" },
+          { hora: "19h10", artista: "André Rio" },
+          { hora: "20h40", artista: "Mônica Feijó" },
+          { hora: "22h10", artista: "Fafá de Belém" },
+          { hora: "23h40", artista: "Banda Q Brega" }
+        ]
+      },
+      {
+        nome: "Polo Lagoa do Araçá",
+        eventos: [
+          { hora: "17h", artista: "As Netas de Selma" },
+          { hora: "18h", artista: "Cristina Amaral" },
+          { hora: "19h10", artista: "Tonfil" },
+          { hora: "20h40", artista: "Janete Saiu para Beber" },
+          { hora: "22h10", artista: "Sassarico" },
+          { hora: "23h40", artista: "Sem Razão" }
+        ]
+      },
+      {
+        nome: "Polo Linha do Tiro",
+        eventos: [
+          { hora: "18h", artista: "Caboclo Mestiço" },
+          { hora: "19h10", artista: "Maestro Forró e OPBH" },
+          { hora: "20h40", artista: "João Lacerda" },
+          { hora: "22h10", artista: "Marron Brasileiro" },
+          { hora: "23h40", artista: "Tuca Barros" }
+        ]
+      },
+      {
+        nome: "Polo Poço da Panela",
+        eventos: [
+          { hora: "17h", artista: "Mestre Galo Preto" },
+          { hora: "18h", artista: "Mangroov" },
+          { hora: "19h10", artista: "Mestre Ambrósio" },
+          { hora: "20h40", artista: "Deb Lima" },
+          { hora: "22h10", artista: "Josyara" },
+          { hora: "23h40", artista: "Céu" }
+        ]
+      },
+      {
+        nome: "Polo da Várzea",
+        eventos: [
+          { hora: "15h", artista: "Recife Matriz de Cultura Popular" },
+          { hora: "17h", artista: "O Povo Quer Sambar" },
+          { hora: "18h", artista: "Riáh" },
+          { hora: "19h10", artista: "Barbarize" },
+          { hora: "20h40", artista: "Uana" },
+          { hora: "22h10", artista: "Lula Queiroga" },
+          { hora: "23h40", artista: "Lenine" }
+        ]
+      },
+      {
+        nome: "Polo Mercado da Boa Vista",
+        eventos: [
+          { hora: "13h30", artista: "Betto do Bandolim" },
+          { hora: "15h", artista: "Kelly Rosa" },
+          { hora: "16h30", artista: "Grupo Pernambucaneando" }
+        ]
+      },
+      {
+        nome: "Terça Negra - Pátio do Terço",
+        eventos: [
+          { hora: "19h20", artista: "Capim Santo" },
+          { hora: "20h40", artista: "Valdir Afonjah" },
+          { hora: "22h", artista: "Cubana Rasta" },
+          { hora: "23h20", artista: "Grupo Bongar" },
+          { hora: "00h40", artista: "Danzi" }
+        ]
+      },
+      {
+        nome: "Pátio de Santa Cruz",
+        eventos: [
+          { hora: "15h", artista: "Encontro de Caboclinhos e Índios" }
+        ]
+      },
+      {
+        nome: "Blocos",
+        eventos: [
+          { hora: "12h", artista: "Bloco da Saudade - Pça. Maciel Pinheiro" },
+          { hora: "15h", artista: "Quero ver quem vem aí - Pça. do Arsenal" },
+          { hora: "16h", artista: "Maracatu Nação Pernambuco - Pça. do Arsenal" },
+          { hora: "16h", artista: "Afojubá Batuque - Av. Marquês de Olinda" },
+          { hora: "19h", artista: "Congobloco - Rua da Guia" }
+        ]
+      }
+    ]
+  },
+  {
+    dia: "Quarta-feira (18)",
+    locais: [
+      {
+        nome: "Polo Mercado da Boa Vista",
+        eventos: [
+          { hora: "13h30", artista: "Maria Pagodinho" },
+          { hora: "15h", artista: "Carlinhos Monte Verde" },
+          { hora: "16h30", artista: "Orquestra Rockfônica de Frevo" }
+        ]
+      }
+    ]
+  }
+];
+
+// Cores Oficiais
+const COR_AZUL = "#024796";
+const COR_LARANJA = "#f83d03";
+
+// Novo Componente de Confete
+const ConfettiEffect = () => {
+  const particles = useMemo(() => {
+    const colors = ['#f83d03', '#FFC800', '#00A859', '#ffffff', '#60a5fa', '#f472b6'];
+    return Array.from({ length: 50 }).map((_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      duration: 3 + Math.random() * 4,
+      delay: Math.random() * 5,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      size: Math.random() > 0.5 ? 'w-1.5 h-3' : 'w-2 h-2',
+      rotate: Math.floor(Math.random() * 360)
+    }));
+  }, []);
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
+      {particles.map((p) => (
+        <div
+          key={p.id}
+          className={`absolute top-[-20px] ${p.size} rounded-[1px] opacity-80`}
+          style={{
+            left: `${p.left}%`,
+            backgroundColor: p.color,
+            transform: `rotate(${p.rotate}deg)`,
+            animation: `confetti-fall ${p.duration}s linear infinite`,
+            animationDelay: `-${p.delay}s`,
+          }}
+        />
+      ))}
+      <style>{`
+        @keyframes confetti-fall {
+          0% { transform: translateY(0) rotate(0deg) translateX(0); opacity: 1; }
+          25% { transform: translateY(50px) rotate(90deg) translateX(10px); }
+          50% { transform: translateY(100px) rotate(180deg) translateX(-10px); }
+          75% { transform: translateY(150px) rotate(270deg) translateX(10px); }
+          100% { transform: translateY(200px) rotate(360deg) translateX(0); opacity: 0; }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default function CarnivalDashboard() {
+  const [diaSelecionado, setDiaSelecionado] = useState(PROGRAMACAO[0].dia);
+  const [localFiltro, setLocalFiltro] = useState("Todos");
+
+  // Dados do dia atual
+  const dadosDoDia = useMemo(() => {
+    return PROGRAMACAO.find(d => d.dia === diaSelecionado);
+  }, [diaSelecionado]);
+
+  // Lista de locais disponíveis no dia selecionado
+  const locaisDisponiveis = useMemo(() => {
+    if (!dadosDoDia) return ["Todos"];
+    // Ordena alfabeticamente para facilitar a busca
+    const nomes = dadosDoDia.locais.map(l => l.nome).sort();
+    return ["Todos", ...nomes];
+  }, [dadosDoDia]);
+
+  // Filtra os eventos com base no local selecionado
+  const eventosFiltrados = useMemo(() => {
+    if (!dadosDoDia) return [];
+    
+    let locais = dadosDoDia.locais;
+
+    if (localFiltro !== "Todos") {
+      locais = locais.filter(l => l.nome === localFiltro);
+    }
+
+    return locais;
+  }, [dadosDoDia, localFiltro]);
+
+  // Ao mudar o dia, reseta o filtro de local para evitar estados inválidos
+  const handleDiaChange = (novoDia) => {
+    setDiaSelecionado(novoDia);
+    setLocalFiltro("Todos");
+  };
+
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-200 p-4 font-sans">
+      {/* Container Principal 600x600 */}
+      <div className="w-[600px] h-[600px] bg-white shadow-2xl overflow-hidden flex flex-col relative rounded-3xl border-4 border-white ring-4 ring-blue-900/10">
+        
+        {/* Cabeçalho Limpo e Divertido */}
+        <div className="bg-blue-800 text-white relative z-20 shrink-0 overflow-hidden">
+           {/* Adicionando o efeito de confete aqui */}
+           <ConfettiEffect />
+           
+           <div className="px-6 py-4 flex items-center justify-between relative z-10">
+              <div className="flex items-center gap-3">
+                 <div className="bg-white p-1.5 rounded-lg shadow-md transform -rotate-2">
+                    <img src="https://jamildo.com/media/uploads/logojamildo.png" alt="Logo" className="h-6" />
+                 </div>
+                 <div className="flex flex-col">
+                    <span className="text-xs text-orange-400 font-bold uppercase tracking-wider">Guia Oficial</span>
+                    <h1 className="text-xl font-black leading-none tracking-tight">CARNAVAL 2026</h1>
+                 </div>
+              </div>
+              <div className="bg-orange-500 p-2 rounded-full shadow-lg">
+                <PartyPopper className="w-5 h-5 text-white animate-pulse" />
+              </div>
+           </div>
+           
+           {/* Abas de Navegação (Dias) */}
+           <div className="flex overflow-x-auto no-scrollbar px-2 pb-0 pt-2 gap-1 bg-blue-900/30 relative z-10">
+             {PROGRAMACAO.map((item) => {
+                const active = diaSelecionado === item.dia;
+                const [diaSemana, diaMes] = item.dia.split(' ');
+                const diaNum = diaMes.replace(/[()]/g, '');
+
+                return (
+                  <button
+                    key={item.dia}
+                    onClick={() => handleDiaChange(item.dia)}
+                    className={`flex-1 min-w-[80px] py-3 rounded-t-xl transition-all relative group ${
+                      active 
+                        ? 'bg-gray-50 text-blue-900 translate-y-0.5' 
+                        : 'bg-blue-900/40 text-blue-200 hover:bg-blue-800 hover:text-white'
+                    }`}
+                  >
+                    <div className="flex flex-col items-center leading-tight">
+                      <span className="text-[10px] uppercase font-bold tracking-wider opacity-80">{diaSemana}</span>
+                      <span className="text-lg font-black">{diaNum}</span>
+                    </div>
+                    {active && (
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-1 bg-orange-500 rounded-b-full"></div>
+                    )}
+                  </button>
+                );
+             })}
+           </div>
+        </div>
+
+        {/* Barra de Filtro (Destaque Principal) */}
+        <div className="bg-gray-50 px-4 py-3 border-b border-gray-200 flex flex-col gap-1 z-10 shadow-sm relative">
+           <label className="text-xs font-bold text-gray-500 uppercase ml-1 flex items-center gap-1">
+             <MapPin className="w-3 h-3" /> Filtrar por Polo:
+           </label>
+           <div className="relative group">
+             <select 
+               value={localFiltro}
+               onChange={(e) => setLocalFiltro(e.target.value)}
+               className="w-full appearance-none bg-white border-2 border-blue-100 text-blue-900 font-bold text-lg rounded-xl px-4 py-3 pr-10 focus:outline-none focus:border-orange-400 focus:ring-4 focus:ring-orange-100 transition-all cursor-pointer shadow-sm hover:border-blue-300"
+             >
+               {locaisDisponiveis.map(local => (
+                 <option key={local} value={local}>{local}</option>
+               ))}
+             </select>
+             <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-orange-500 group-hover:scale-110 transition-transform">
+               <ChevronDown className="w-6 h-6 stroke-[3]" />
+             </div>
+           </div>
+        </div>
+
+        {/* Área de Conteúdo */}
+        <div className="flex-1 overflow-y-auto bg-gray-50 relative p-4 scroll-smooth">
+           {/* Fundo Decorativo */}
+           <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-5 pointer-events-none">
+             <div className="absolute top-10 left-10 w-32 h-32 bg-blue-500 rounded-full blur-3xl"></div>
+             <div className="absolute bottom-20 right-10 w-40 h-40 bg-orange-500 rounded-full blur-3xl"></div>
+           </div>
+
+           {eventosFiltrados.length === 0 ? (
+             <div className="h-full flex flex-col items-center justify-center text-gray-400 opacity-60">
+               <Music className="w-16 h-16 mb-4" />
+               <p className="text-lg font-medium">Nenhum evento neste local.</p>
+             </div>
+           ) : (
+             <div className="space-y-6 pb-8 relative z-10">
+               {eventosFiltrados.map((local, idx) => (
+                 <div key={idx} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-shadow">
+                   {/* Cabeçalho do Local */}
+                   <div className="bg-blue-50/50 px-4 py-3 border-l-4 border-orange-500 flex items-center gap-2">
+                     <MapPin className="w-5 h-5 text-orange-500 fill-orange-500" />
+                     <h3 className="font-black text-blue-900 text-lg uppercase tracking-tight leading-none">
+                       {local.nome}
+                     </h3>
+                   </div>
+
+                   {/* Lista de Shows */}
+                   <div className="divide-y divide-gray-100">
+                     {local.eventos.map((evento, eIdx) => (
+                       <div key={eIdx} className="p-4 hover:bg-orange-50/30 transition-colors flex items-start gap-4">
+                         <div className="bg-blue-100 text-blue-800 font-black text-sm px-3 py-1.5 rounded-lg min-w-[60px] text-center shadow-sm">
+                           {evento.hora}
+                         </div>
+                         <div className="flex-1 pt-0.5">
+                           <p className="font-bold text-gray-800 text-lg leading-tight">
+                             {evento.artista}
+                           </p>
+                         </div>
+                       </div>
+                     ))}
+                   </div>
+                 </div>
+               ))}
+               
+               {/* Mensagem de Fim da Lista */}
+               <div className="text-center py-4">
+                 <p className="text-xs font-bold text-gray-300 uppercase tracking-widest">Fim da Programação do Dia</p>
+               </div>
+             </div>
+           )}
+        </div>
+
+        {/* Rodapé Colorido */}
+        <div className="h-2 flex shrink-0 bg-gradient-to-r from-blue-600 via-orange-500 to-yellow-400"></div>
+      </div>
+    </div>
+  );
+}
